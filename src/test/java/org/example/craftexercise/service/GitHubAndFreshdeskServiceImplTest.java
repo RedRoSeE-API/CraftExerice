@@ -37,12 +37,11 @@ class GitHubAndFreshdeskServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public  void gitHubGetUserWithToken() throws Exception{
+    public  void TestThatGetUserFromGitHubWithToken() throws Exception{
         // Mock the response
         when(httpResponse.statusCode()).thenReturn(200);
 
@@ -54,7 +53,7 @@ class GitHubAndFreshdeskServiceImplTest {
     }
 
     @Test
-    public void freshDeskGetUserWithToken() throws Exception{
+    public void TestThatGetUserFromFreshdeskWithToken() throws Exception{
         // Mock the response
         when(httpResponse.statusCode()).thenReturn(200);
 
@@ -67,7 +66,7 @@ class GitHubAndFreshdeskServiceImplTest {
 
 
     @Test
-    public void freshDeskAddUserWithToken() throws Exception {
+    public void TestThatAddUserFromGitHubToFreshdeskWithToken() throws Exception {
         // Mock the response
         when(httpResponse.statusCode()).thenReturn(201);
 
@@ -82,9 +81,7 @@ class GitHubAndFreshdeskServiceImplTest {
     }
 
     @Test
-    public void DataMapFromHTTPResponseToString() throws Exception {
-
-//        HttpResponse<String> response = service.gitHubGetUserWithToken(GITHUB_TOKEN);
+    public void TestThatDataMapFromHTTPResponseToFreshdeskModel() throws Exception {
 
         // Sample JSON response
         String jsonResponseString = "{\"name\":\"Super Man\",\"email\":\"superman@freshdesk.com\",\"twitter_id\":\"@superman\",\"id\":\"12345\"}";
@@ -93,17 +90,35 @@ class GitHubAndFreshdeskServiceImplTest {
         when(httpResponse.body()).thenReturn(jsonResponseString);
 
         // Call the method to test
-        String jsonPayload = service.DataMapFromHTTPResponseToString(httpResponse);
-
-        // Parse the result to verify the fields
-        ObjectMapper objectMapper = new ObjectMapper();
-        FreshdeskModel model = objectMapper.readValue(jsonPayload, FreshdeskModel.class);
+        FreshdeskModel model = service.DataMapFromHTTPResponseToFreshdeskModel(httpResponse);
 
         // Verify and assert
         assertEquals("Super Man", model.getName());
         assertEquals("superman@freshdesk.com", model.getEmail());
         assertEquals("@superman", model.getTwitter_id());
         assertEquals("12345", model.getUnique_external_id());
+    }
+
+    @Test
+    public void TestThatDataMapFromFreshdeskModelToString() throws Exception {
+
+        // Create a FreshdeskModel object
+        FreshdeskModel model = new FreshdeskModel();
+        model.setName("John Doe");
+        model.setEmail("john.doe@example.com");
+        model.setTwitter_id("@johndoe");
+        model.setUnique_external_id("12345");
+
+        // Expected JSON string
+        String expectedJson = "{\"name\":\"John Doe\",\"email\":\"john.doe@example.com\",\"twitter_id\":\"@johndoe\",\"unique_external_id\":\"12345\"}";
+
+        // Call the method
+        String jsonResult = service.DataMapFromFreshdeskModelToString(model);
+
+        // Compare the result
+        ObjectMapper objectMapper = new ObjectMapper();
+        assertEquals(objectMapper.readTree(expectedJson), objectMapper.readTree(jsonResult));
+
     }
 
 

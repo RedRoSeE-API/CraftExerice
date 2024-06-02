@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.sql.SQLOutput;
 import java.util.Base64;
 
 public class GitHubAndFreshdeskServiceImpl implements GitHubAndFreshdeskService {
@@ -28,8 +29,10 @@ public class GitHubAndFreshdeskServiceImpl implements GitHubAndFreshdeskService 
         try {
             gitHubGetUserWithTokenResponse = HttpClient.newHttpClient().send(gitHubGetUserWithTokenRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
+            System.out.println("GitHubAndFreshdeskServiceImpl\\gitHubGetUserWithToken IOException:");
             e.printStackTrace();
         } catch (InterruptedException e) {
+            System.out.println("GitHubAndFreshdeskServiceImpl\\gitHubGetUserWithToken InterruptedException:");
             e.printStackTrace();
         }
 
@@ -42,19 +45,21 @@ public class GitHubAndFreshdeskServiceImpl implements GitHubAndFreshdeskService 
         String auth = FreshdeskToken + ":X";
         String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
 
-        // FreshDesk Request Builder
-        HttpRequest freshDeskGetUserWithTokenRequest = HttpRequest.newBuilder()
-                .uri(URI.create("https://"+ freshdeskSubdomain +"/api/v2/contacts"))
-                .header("Authorization", "Basic " + encodedAuth)
-                .GET()
-                .build();
         HttpResponse<String> freshDeskGetUserWithTokenResponse = null;
 
         try {
+            // FreshDesk Request Builder
+            HttpRequest freshDeskGetUserWithTokenRequest = HttpRequest.newBuilder()
+                    .uri(URI.create("https://"+ freshdeskSubdomain +"/api/v2/contacts"))
+                    .header("Authorization", "Basic " + encodedAuth)
+                    .GET()
+                    .build();
             freshDeskGetUserWithTokenResponse = HttpClient.newHttpClient().send(freshDeskGetUserWithTokenRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
+            System.out.println("\n!! GitHubAndFreshdeskServiceImpl\\freshDeskGetUserWithToken IOException !!");
             e.printStackTrace();
         } catch (InterruptedException e) {
+            System.out.println("\n!! GitHubAndFreshdeskServiceImpl\\freshDeskGetUserWithToken InterruptedException !!");
             e.printStackTrace();
         }
 
@@ -79,16 +84,19 @@ public class GitHubAndFreshdeskServiceImpl implements GitHubAndFreshdeskService 
 
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
-        } catch (Exception e) {
+
+        } catch (IOException e) {
+            System.out.println("\n!! GitHubAndFreshdeskServiceImpl\\freshDeskAddUserWithToken IOException !!");
+            e.printStackTrace();
+        }catch (InterruptedException e){
+            System.out.println("\n!! GitHubAndFreshdeskServiceImpl\\freshDeskAddUserWithToken InterruptedException !!");
             e.printStackTrace();
         }
         return response;
     }
 
     @Override
-    public String DataMapFromHTTPResponseToString(HttpResponse<String> jsonResponse){
+    public FreshdeskModel DataMapFromHTTPResponseToFreshdeskModel(HttpResponse<String> jsonResponse){
 
         ObjectMapper objectMapper = new ObjectMapper();
         FreshdeskModel model = new FreshdeskModel();
@@ -99,15 +107,25 @@ public class GitHubAndFreshdeskServiceImpl implements GitHubAndFreshdeskService 
             model.setEmail(rootNode.path("email").asText());
             model.setTwitter_id(rootNode.path("twitter_id").asText());
             model.setUnique_external_id(rootNode.path("id").asText());
-        } catch (Exception e) {
+        } catch (IOException e) {
+            System.out.println("\n!! GitHubAndFreshdeskServiceImpl\\DataMapFromHTTPResponseToFreshdeskModel IOException !!");
             e.printStackTrace();
         }
+
+        return model;
+    }
+
+    @Override
+    public String DataMapFromFreshdeskModelToString(FreshdeskModel model){
+
+        ObjectMapper objectMapper = new ObjectMapper();
 
         String jsonPayload = "";
 
         try {
             jsonPayload = objectMapper.writeValueAsString(model);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            System.out.println("\n!! GitHubAndFreshdeskServiceImpl\\DataMapFromFreshdeskModelToString IOException !!");
             e.printStackTrace();
         }
 
