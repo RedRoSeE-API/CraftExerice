@@ -54,7 +54,7 @@ VALUES ("test", "test.test@gmail.com", "@test1", "test123", CURRENT_TIMESTAMP);
 - `FRESHDESK_TOKEN`: Your Freshdesk API token
 
 3.2 Update the `src/main/resources/config.properties` and file with your database credentials:
-    ```properties
+    ```
     db.url=jdbc:mysql://your_url/
     db.database=your_database_name
     db.username=your_username
