@@ -23,7 +23,7 @@ This project is a Java-based application that interacts with GitHub and Freshdes
 ### 1. Clone the Repository
 
 ```sh
-git clone https://github.com/yourusername/craft-exercise.git
+https://github.com/RedRoSeE-API/CraftExerice.git
 cd craft-exercise
 ```
 
