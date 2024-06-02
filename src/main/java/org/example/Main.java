@@ -14,15 +14,14 @@ public class Main {
 
         final String GITHUB_TOKEN = System.getenv("GITHUB_TOKEN");
         final String FRESHDESK_TOKEN = System.getenv("FRESHDESK_TOKEN");
-
         Scanner sc = new Scanner(System.in);
 
+        System.out.println("Please be sure you configured the environment variables and config.properties file!\n");
         System.out.print("GitHub Username: ");
         String gitHubUsername = sc.nextLine();
         System.out.print("Freshdesk Subdomain: ");
         String freshdeskSubDomain = sc.nextLine();
-        //RedRoSeE-API
-        //test7226.freshdesk.com
+
 
         //Initialize GitAndFreshdeskService
         GitHubAndFreshdeskServiceImpl GitAndFreshdeskService = new GitHubAndFreshdeskServiceImpl();
